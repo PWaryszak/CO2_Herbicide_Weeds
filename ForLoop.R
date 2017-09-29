@@ -261,6 +261,28 @@ levels(droplevels(glyph$genus.species))
 [13] Tradescantia.fluminensis 
 [14] Verbena.bonariensis 
 
+#Ageratina.adenophora TINKERING =======
+Ageratina<-glyph[glyph$genus=="Ageratina", ]
+dim(Ageratina)#200   9
+fit.Ageratina <- survfit( Surv(Week, Status) ~  Dose + CO2, data = Ageratina)
+summary(fit.Ageratina)# Access to the sort summary table
+#Plot:
+g<- ggsurvplot(fit.Ageratina, pval = TRUE, size=2, censor.shape = "strata", color = "strata", linetype = "strata")
+g1<- g$plot + ggtitle("Ageratina adenophora") + theme_classic() +xlab("") + ylab("Fraction Survival")
+g2 <- g1 + theme(legend.position = c(0.2,.3),
+                 axis.text.y=element_text(size=20),
+                 axis.title.x=element_text(size=20),
+                 axis.text.x=element_text(size=20),
+                 axis.title.y=element_text(size=20),
+                 legend.text = element_text(size = 10),
+                 plot.title = element_text(lineheight=1.2, face="bold.italic",size=22, hjust = 0.5))
+
+g2 
+
+plot.Ageratina <- g2 + guides(shape=FALSE)
+plot.Ageratina
+
+
 #Ageratina.adenophora=======
 Ageratina<-glyph[glyph$genus=="Ageratina", ]
 fit.Ageratina <- survfit( Surv(Week, Status) ~  Dose + CO2, data = Ageratina)

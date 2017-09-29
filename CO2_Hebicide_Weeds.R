@@ -22,7 +22,7 @@ head(co2.biomass)
 co2.biomass$PFT<-co2.biomass$genus
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Tradescantia"]<-"herb"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Verbena"   ] <- "herb"
-levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Ageratina" ] <- "C3grass"
+levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Ageratina" ] <- "herb"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Anredera"  ] <- "vine"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Asparagus"] <-  "shrub"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Avena"     ]<-  "C3grass"
@@ -47,9 +47,9 @@ co2.biomass<-summarySE(biomass, measurevar="total.biomass", groupvars=c("genus",
 head(co2.biomass)
 
 co2.biomass$genus<-factor(co2.biomass$genus,
-                          levels= c("Ageratina","Avena","Bromus","Ehrharta",
+                          levels= c("Avena","Bromus","Ehrharta",
                                     "Chloris","Cenchrus" ,
-                                    "Tradescantia","Verbena",
+                                    "Tradescantia","Ageratina","Verbena",
                                     "Asparagus","Cotoneaster","Lantana","Senna",
                                     "Anredera","Ipomoea"))
 
@@ -61,7 +61,7 @@ co2.biomass$CO2ae<-as.factor(ifelse(co2.biomass$CO2=="ambient", "A", "E"))
 co2.biomass$PFT<-co2.biomass$genus
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Tradescantia"]<-"herb"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Verbena"   ] <- "herb"
-levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Ageratina" ] <- "C3grass"
+levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Ageratina" ] <- "herb"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Anredera"  ] <- "vine"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Asparagus"] <-  "shrub"
 levels(co2.biomass$PFT)[levels(co2.biomass$PFT)=="Avena"     ]<-  "C3grass"
