@@ -45,7 +45,6 @@ co2.biomass<-co2.biomass[order(co2.biomass$PFT),] #ORder alphabeticaly so they l
 #Compute Means +-95% CI
 co2.biomass<-summarySE(biomass, measurevar="total.biomass", groupvars=c("genus","species","CO2"))
 head(co2.biomass)
-
 co2.biomass$genus<-factor(co2.biomass$genus,
                           levels= c("Avena","Bromus","Ehrharta",
                                     "Chloris","Cenchrus" ,
@@ -286,8 +285,8 @@ high5<-high4 + theme(axis.text.x=element_text(size=30),
        legend.title = element_text(face = "italic",size=33))
 high5
 
-#Plotting PEnnisetum only (the only one with significant response to elevated CO2):========
-penni<-z[z$genus=="Pennisetum",]
+#Plotting Cenchrus only (the only one with significant response to elevated CO2):========
+penni<-z[z$genus=="Cenchrus",]
 penni1<-ggplot(penni, aes(x=herbicide, y=Perc/100, colour=herbicide, shape=CO2)) 
 penni2<-penni1 + geom_point(size=9) +scale_colour_manual(values=c("blue","red", "darkgreen"))
 penni2 
@@ -304,10 +303,12 @@ penni5<- penni4 +theme(axis.text.y=element_text(size=15),
                    legend.title = element_text(size=17))
 penni5
 
-#STATS on biomass:=========
+#STATS on Total Biomass:=========
 #computing Species biomass response to elevated CO2:
 levels(biomass$genus)
 #we need to remove Olea as it was mis-sprayed:
+data <- read.csv("CO2survival.csv")
+biomass<-subset(data, data=="biomass.data") # only biomass data
 biomass<-biomass[!biomass$genus=="Olea",]
 
 #SUPER COOL WAY using for loop:
@@ -328,15 +329,16 @@ for ( i in unique(biomass$genus) ){
   Output <- rbind(Output, saveoutput)
   }
 Output
-#write.csv(Output, file="Output.csv")
-
+#write.csv(Output, file="Biomass_Stats_Output.csv")
+See.PValue<- rownames_to_column(Output)%>%
+  filter(Pr...t.. <0.05) 
+See.PValue
 
 #STATS on Root Mass Only:=========
 #it puts the outcome into a dataframe called Output:
 #The code belowe reproduces "root mass weight" values in Table 2 in Tanja's Manuscript:
 #"
 Output.Root <- NULL #we need to set an empty shelf for data called Output
-str(biomass)
 for ( i in unique(biomass$genus.species) ){
   #create a subset data 
   data_sub <- subset(biomass, genus.species== i)
@@ -351,7 +353,10 @@ for ( i in unique(biomass$genus.species) ){
 }
 Output.Root
 summary(lm(root.biomass~CO2,data=biomass))
-#write.csv(Output.Root, file="OutputRootMass.csv") #Saves the output in a excel file
+#write.csv(Output.Root, file="Biomass_RootsOnly_Stats_Output.csv") #Saves the output in a excel file
+See.PValue.Roots<- rownames_to_column(Output.Root)%>%
+  filter(Pr...t.. <0.05)
+See.PValue.Roots
 
 
 #STATS on Root/Total Biomass Ratio===========
@@ -513,7 +518,7 @@ levels(survival$pft.)[levels(survival$pft.)=="Ehrharta"  ] <- "C3grass"
 levels(survival$pft.)[levels(survival$pft.)=="Ipomoea"   ] <- "vine"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Olea"      ] <- "tree"
-levels(survival$pft.)[levels(survival$pft.)=="Pennisetum"] <- "C4grass"
+levels(survival$pft.)[levels(survival$pft.)=="Cenchrus"] <- "C4grass"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Senna"     ] <- "shrub"
 
@@ -581,7 +586,7 @@ levels(survival$pft.)[levels(survival$pft.)=="Ehrharta"  ] <- "C3grass"
 levels(survival$pft.)[levels(survival$pft.)=="Ipomoea"   ] <- "vine"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Olea"      ] <- "tree"
-levels(survival$pft.)[levels(survival$pft.)=="Pennisetum"] <- "C4grass"
+levels(survival$pft.)[levels(survival$pft.)=="Cenchrus"] <- "C4grass"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Senna"     ] <- "shrub"
 
@@ -652,7 +657,7 @@ levels(survival$pft.)[levels(survival$pft.)=="Ehrharta"  ] <- "C3grass"
 levels(survival$pft.)[levels(survival$pft.)=="Ipomoea"   ] <- "vine"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Olea"      ] <- "tree"
-levels(survival$pft.)[levels(survival$pft.)=="Pennisetum"] <- "C4grass"
+levels(survival$pft.)[levels(survival$pft.)=="Cenchrus"] <- "C4grass"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Senna"     ] <- "shrub"
 
@@ -726,7 +731,7 @@ levels(survival$pft.)[levels(survival$pft.)=="Ehrharta"  ] <- "C3grass"
 levels(survival$pft.)[levels(survival$pft.)=="Ipomoea"   ] <- "vine"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Olea"      ] <- "tree"
-levels(survival$pft.)[levels(survival$pft.)=="Pennisetum"] <- "C4grass"
+levels(survival$pft.)[levels(survival$pft.)=="Cenchrus"] <- "C4grass"
 levels(survival$pft.)[levels(survival$pft.)=="Lantana"   ] <- "shrub"
 levels(survival$pft.)[levels(survival$pft.)=="Senna"     ] <- "shrub"
 
@@ -764,3 +769,72 @@ pft.shrub              2.374      0.248   9.583    0.000
 pft.vine               2.548      0.265   9.617    0.000
 sprayon:CO2elevated    0.034   1153.792   0.000    1.000
 
+#Mean +- SE of Total Biomass and Root Biomass====
+#TOTAL BIOMASS:
+co2.biomass<-summarySE(biomass, measurevar="total.biomass", groupvars=c("genus","species","CO2"))
+head(co2.biomass)
+c<-round(co2.biomass[,5:8], digits=2)
+d <- co2.biomassRoot [,1:4]
+cd<-cbind(d,c)
+#write.csv(cd, file = "BiomasTotal_MeansSE3.csv")
+
+e<- cd[ ,c("genus", "species" ,"CO2","N", "total.biomass", "se")]
+
+eTable <- unite(e, "Biomass_SE", c("total.biomass", "se"), sep = " ± " ) %>%
+          unite ("Biomass_SE_N", c("Biomass_SE", "N"), sep = " (")
+eTable
+eTable$Biomass_SE_N <- factor(paste0(eTable$Biomass_SE_N ,")",sep=""))
+eTable
+e.wide <- spread(eTable,CO2, Biomass_SE_N)
+e.wide
+##########genus       species          ambient         elevated
+1     Ageratina    adenophora   1.85 ± 0.3 (4)  2.02 ± 0.16 (4)
+2      Anredera    cordifolia  4.34 ± 1.26 (6)  7.84 ± 2.86 (6)
+3     Asparagus   aethiopicus  2.33 ± 0.24 (5)   3.32 ± 0.4 (5)
+4         Avena       barbata  5.08 ± 0.61 (4)  6.48 ± 0.75 (4)
+5        Bromus   catharticus  3.19 ± 0.64 (4)  3.79 ± 0.44 (4)
+6      Cenchrus  clandestinum  2.76 ± 0.09 (4)   3.54 ± 0.2 (4)
+7       Chloris        gayana  3.52 ± 0.51 (4)  3.46 ± 0.27 (4)
+8   Cotoneaster glaucophyllus   3.1 ± 0.21 (6)  4.09 ± 0.43 (6)
+9      Ehrharta        erecta  1.28 ± 0.31 (4)  1.43 ± 0.73 (4)
+10      Ipomoea        indica 13.72 ± 0.92 (4) 16.39 ± 0.86 (4)
+11      Lantana        camara 12.74 ± 1.46 (4) 12.07 ± 1.71 (4)
+12        Senna       pendula  1.39 ± 0.06 (4)  2.29 ± 0.62 (4)
+13 Tradescantia   fluminensis  6.75 ± 0.65 (4)  9.05 ± 1.03 (4)
+14      Verbena   bonariensis  2.63 ± 0.37 (4)  2.53 ± 0.11 (4)
+
+
+#ROOTS BIOMASS========
+co2.biomassRoot<-summarySE(biomass, measurevar="root.biomass", groupvars=c("genus","species","CO2"))
+co2.biomassRoot
+a<-round(co2.biomassRoot[,5:8], digits=2)
+b <- co2.biomassRoot [,1:4]
+ab<-cbind(b,a)
+
+f<- ab[ ,c( "genus", "species" ,"CO2","N", "root.biomass", "se")]
+fTable <- unite(f, "Biomass_SE", c("root.biomass", "se"), sep = " ± " ) %>%
+  unite ("Biomass_SE_N", c("Biomass_SE", "N"), sep = " (")
+fTable
+fTable$Biomass_SE_N <- factor(paste0(fTable$Biomass_SE_N ,")",sep=""))
+fTable
+f.wide <- spread(fTable,CO2, Biomass_SE_N)
+f.wide
+###########genus       species          ambient         elevated
+1     Ageratina    adenophora 1.49 ± 0.23 (4) 1.53 ± 0.12 (4)
+2      Anredera    cordifolia     NA ± NA (6)     NA ± NA (6)
+3     Asparagus   aethiopicus 1.18 ± 0.13 (5) 1.48 ± 0.17 (5)
+4         Avena       barbata 1.04 ± 0.12 (4) 1.28 ± 0.12 (4)
+5        Bromus   catharticus 2.02 ± 0.49 (4) 2.47 ± 0.25 (4)
+6      Cenchrus  clandestinum 1.77 ± 0.15 (4) 2.32 ± 0.14 (4)
+7       Chloris        gayana 2.75 ± 0.42 (4) 2.24 ± 0.22 (4)
+8   Cotoneaster glaucophyllus 2.44 ± 0.19 (6) 3.17 ± 0.35 (6)
+9      Ehrharta        erecta 0.92 ± 0.25 (4)   1.1 ± 0.6 (4)
+10      Ipomoea        indica 5.26 ± 0.63 (4) 5.95 ± 0.63 (4)
+11      Lantana        camara 2.94 ± 0.53 (4) 2.73 ± 0.44 (4)
+12        Senna       pendula 0.43 ± 0.02 (4)  0.8 ± 0.28 (4)
+13 Tradescantia   fluminensis 0.51 ± 0.09 (4) 0.56 ± 0.07 (4)
+14      Verbena   bonariensis 1.77 ± 0.33 (4) 1.45 ± 0.07 (4)
+
+
+mass<- cbind(e.wide,f.wide)
+write.csv(mass, file = "BiomasTotal_and_Roots_Mean_SE.csv")
