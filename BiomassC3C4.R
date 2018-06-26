@@ -88,6 +88,7 @@ Half1.Plot<-ggplot(half1, aes(x=CO2ae, y=BiomassRate, shape=Growth_Type, color =
   geom_errorbar(aes(ymin=BiomassRate-ci, ymax=BiomassRate+ci),width=.35,position=pd,size=.9)+
   geom_point(position=pd,size=4)+ geom_line(position=pd) + 
   scale_shape_manual(values=c(0,15,2))+
+  scale_color_manual(values = c("red","green","blue"))+
   facet_grid(.~genus + species )+theme_bw()+
   theme(axis.text.x=element_text(size=15),
         axis.text.y=element_text(size=15),
@@ -107,6 +108,7 @@ Half2.Plot <- ggplot(half2, aes(x=CO2ae, y=BiomassRate, shape=Growth_Type, color
   geom_point(position=pd,size=4) +
   geom_line(position=pd) + 
   scale_shape_manual(values=c(8,9))+
+  scale_color_manual(values = c("red","green"))+
   facet_grid(.~genus + species )+theme_bw()+
   theme(axis.text.x=element_text(size=15),
         axis.text.y=element_text(size=15),
@@ -120,7 +122,7 @@ Half2.Plot <- ggplot(half2, aes(x=CO2ae, y=BiomassRate, shape=Growth_Type, color
 Half2.Plot
 
 Two.Halves<-grid.arrange(Half1.Plot,Half2.Plot, ncol=1)
-#ggsave(Two.Halves,filename = "BiomassRate2Panels.jpeg", width = 320, height = 240, units = "mm" )  
+ggsave(Two.Halves,filename = "BiomassRate2Panels_26jun2018.jpeg", width = 320, height = 240, units = "mm" )  
 
 
 #Biomass in C3 and C4 under elevated CO2:=============
