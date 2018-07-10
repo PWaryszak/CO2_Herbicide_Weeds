@@ -1,6 +1,7 @@
 #PFT + Plant Functional Groups=======
 #Analysis without Olea (misprayed)
 #CO2 X Herbicde X PFT analysis of data from glasshouse:
+
 #LOAD DATA:
 data <- read.csv("CO2survival.csv")
 survival<-subset(data, data=="survival.data")
@@ -11,28 +12,6 @@ dim(survival)#1064 obs. of  20 variables:
 levels(survival$genus)
 survival$PFT<-as.factor(survival$genus)
 
-#Changing the level names to PFT-s:
-levels(survival$PFT)[levels(survival$PFT)=="Tradescantia"]<-"herb"
-levels(survival$PFT)[levels(survival$PFT)=="Verbena"   ] <- "herb"
-levels(survival$PFT)[levels(survival$PFT)=="Ageratina" ] <- "herb"
-levels(survival$PFT)[levels(survival$PFT)=="Anredera"  ] <- "vine"
-levels(survival$PFT)[levels(survival$PFT)=="Asparagus"] <-  "herb"
-levels(survival$PFT)[levels(survival$PFT)=="Avena"     ]<-  "C3grass"
-levels(survival$PFT)[levels(survival$PFT)=="Bromus"    ] <- "C3grass"
-levels(survival$PFT)[levels(survival$PFT)=="Chloris"   ] <- "C4grass"
-levels(survival$PFT)[levels(survival$PFT)=="Cotoneaster"] <-"shrub"
-levels(survival$PFT)[levels(survival$PFT)=="Ehrharta"  ] <- "C3grass"
-levels(survival$PFT)[levels(survival$PFT)=="Ipomoea"   ] <- "vine"
-levels(survival$PFT)[levels(survival$PFT)=="Lantana"   ] <- "shrub"
-levels(survival$PFT)[levels(survival$PFT)=="Cenchrus"] <- "C4grass"
-levels(survival$PFT)[levels(survival$PFT)=="Lantana"   ] <- "shrub"
-levels(survival$PFT)[levels(survival$PFT)=="Senna"     ] <- "shrub"
-
-#Adding additional Herbicide column as herbicide rate showed not significan difference:
-survival$Herbicide<-as.factor(ifelse(survival$herbicide=="Control", "Off", "On"))
-survival$PFT<-factor(survival$PFT,levels= c("C3grass","C4grass","herb","shrub","vine" ))
-survival$PFT<-factor(survival$PFT,levels= c("C3grass","shrub","herb","C4grass","vine" ))
-levels(survival$PFT)#"C3grass" "herb" "C4grass" "shrub"   "vine" 
 #LOAD Libraries:
 library(nlme)
 library(sjmisc)
@@ -40,31 +19,52 @@ library(tidyverse)
 library(lme4)
 library("sjPlot")
 
+#Changing the level names to PFT-s:
+levels(survival$PFT)[levels(survival$PFT)=="Avena"     ]<-  "C3grass"
+levels(survival$PFT)[levels(survival$PFT)=="Bromus"    ] <- "C3grass"
+levels(survival$PFT)[levels(survival$PFT)=="Ehrharta"  ] <- "C3grass"
+levels(survival$PFT)[levels(survival$PFT)=="Chloris"   ] <- "C4grass"
+levels(survival$PFT)[levels(survival$PFT)=="Cenchrus"  ] <- "C4grass"
+levels(survival$PFT)[levels(survival$PFT)=="Tradescantia"]<-"herb"
+levels(survival$PFT)[levels(survival$PFT)=="Verbena"   ] <- "herb"
+levels(survival$PFT)[levels(survival$PFT)=="Ageratina" ] <- "herb"
+levels(survival$PFT)[levels(survival$PFT)=="Asparagus"] <-  "shrub"
+levels(survival$PFT)[levels(survival$PFT)=="Cotoneaster"] <-"shrub"
+levels(survival$PFT)[levels(survival$PFT)=="Lantana"   ] <- "shrub"
+levels(survival$PFT)[levels(survival$PFT)=="Senna"     ] <- "shrub"
+levels(survival$PFT)[levels(survival$PFT)=="Ipomoea"   ] <- "vine"
+levels(survival$PFT)[levels(survival$PFT)=="Anredera"  ] <- "vine"
+
+#Adding additional Herbicide column as herbicide rate showed not significan difference:
+survival$Herbicide<-as.factor(ifelse(survival$herbicide=="Control", "Off", "On"))
+survival$PFT<-factor(survival$PFT,levels= c("C3grass","herb","C4grass","shrub","vine" ))
+levels(survival$PFT)#"C3grass" "herb" "C4grass" "shrub"   "vine" 
+
 #G2 Binomial model to produce graphical abstract for JEM:======
 #Keep spray on and elevated CO2 only for simplicity reasons:
-abstract<-survival[survival$Herbicide=="On" & survival$CO2=="elevated",]
+abstract <- filter(survival, CO2=="elevated" & glyphosate=="glyphosate" &
+                    Herbicide=="On")
 #run simple model on PFT-s only:
-abstract.model<- glmer(survival ~  PFT + (1 | glasshouse), 
-                       family="binomial", data = abstract)
+abstract.model<- glm(survival ~  PFT ,family="binomial", data = abstract)
 summary(abstract.model)
 
-sjp.glmer(abstract.model, type = "fe")#Simple plot of effect sizes.
-
 #Choose theme for your plot:
-set_theme(geom.outline.color = "antiquewhite4", 
-          geom.label.color = "grey70",
-          title.color = "red", 
-          title.size = 1.3, 
+set_theme(geom.outline.color = "black",
+          title.color = "black", 
+          title.size = 1.5, 
+          axis.title.size = 1.5,
           title.align = "center",
           axis.textcolor = "black", 
           axis.textsize = 1.5,
+          axis.title.color = "black",
           base = theme_classic())
-
 #Plot effect sizes of abstract.model:
-sjp.glmer(abstract.model, type = "pred",vars = c("PFT"),show.scatter = T,
-          show.ci =  T, facet.grid = T, 
-          title = "Survival (±95%CI) of five growth types (14 sp.) grown under elevated CO2 and treated with herbicide") 
-
+sjp.glm(abstract.model, type = "pred",vars = c("PFT"),
+          show.ci =  T,geom.colors  = "black",
+         show.scatter = F, axis.lim = c(0,1),
+        title = "Weeds grown under elevated CO  and treated with glyphosate",
+        axis.title = c( "", "Survival (±95% CI)"))
+        
 #Many functions are not available but you can access data of sjp plot to manipulated it:
-https://stackoverflow.com/questions/40620644/changing-line-colors-and-types-of-a-spj-glmer-probability-plots-of-covariates-by
-
+#https://stackoverflow.com/questions/40620644/changing-line-colors-and-types-of-a-spj-glmer-probability-plots-of-covariates-by
+ggsave(filename="p4.pdf", width=10, height=4,bg = "transparent")
